@@ -16,39 +16,62 @@
       bottom: 0;
       width: 100%;
       height: 45px;
-      background: rgba(0,0,0,0.6);
-      color: white;
+      background: rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       padding: 0 10px;
-    }
-
-    /* ICONS */
-    .icon {
-      width: 80px;
-      text-align: center;
       color: white;
-      margin: 20px;
-      cursor: pointer;
-      display: inline-block;
+      gap: 10px;
     }
 
-    .icon div:first-child {
-      font-size: 30px;
+    .startbtn {
+      background: #00aaff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .taskbtn {
+      background: rgba(255,255,255,0.2);
+      padding: 5px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* START MENU */
+    .startmenu {
+      position: fixed;
+      bottom: 45px;
+      left: 10px;
+      width: 200px;
+      background: white;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .startmenu div {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .startmenu div:hover {
+      background: #eee;
     }
 
     /* WINDOW */
     .window {
       position: absolute;
-      top: 80px;
-      left: 80px;
-      width: 320px;
-      height: 220px;
+      width: 350px;
+      height: 250px;
       background: white;
       border-radius: 10px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.4);
       display: flex;
       flex-direction: column;
+      resize: both;
+      overflow: hidden;
     }
 
     .titlebar {
@@ -66,42 +89,74 @@
       overflow: auto;
     }
 
-    .close {
+    .close { cursor: pointer; }
+
+    /* ICONS */
+    .icon {
+      width: 80px;
+      text-align: center;
+      color: white;
+      margin: 20px;
       cursor: pointer;
+      display: inline-block;
     }
+
+    .icon div:first-child { font-size: 30px; }
+
   </style>
 </head>
 
 <body>
 
 <!-- ICONS -->
-<div class="icon" onclick="openBrowser()">
-  <div>🌐</div><div>Browser</div>
-</div>
-
-<div class="icon" onclick="openFiles()">
+<div class="icon" onclick="openApp('files')">
   <div>📁</div><div>Files</div>
 </div>
 
-<div class="icon" onclick="openCamera()">
-  <div>📷</div><div>Camera</div>
+<div class="icon" onclick="openApp('settings')">
+  <div>⚙️</div><div>Settings</div>
+</div>
+
+<div class="icon" onclick="openApp('browser')">
+  <div>🌐</div><div>Browser</div>
+</div>
+
+<!-- START MENU -->
+<div class="startmenu" id="startmenu">
+  <div onclick="openApp('files')">📁 File Explorer</div>
+  <div onclick="openApp('browser')">🌐 Browser</div>
+  <div onclick="openApp('settings')">⚙️ Settings</div>
 </div>
 
 <!-- TASKBAR -->
 <div class="taskbar">
-  🐬 DolphinOS v0.2
+  <div class="startbtn" onclick="toggleStart()">🐬 Dolphin</div>
+  <div id="tasks"></div>
 </div>
 
 <script>
 
-let files = {
-  "readme.dol": "Welcome to DolphinOS",
-  "notes.dol": "This is your file system"
-};
+let apps = {};
+let z = 1;
+let storageUsed = 2; // fake GB
 
-function createWindow(title, content) {
+/* START MENU */
+function toggleStart() {
+  const sm = document.getElementById("startmenu");
+  sm.style.display = sm.style.display === "flex" ? "none" : "flex";
+}
+
+/* WINDOW SYSTEM */
+function createWindow(id, title, content) {
+  if (apps[id]) {
+    apps[id].style.display = "flex";
+    bringToFront(apps[id]);
+    return;
+  }
+
   const win = document.createElement("div");
   win.className = "window";
+  win.style.zIndex = z++;
 
   win.innerHTML = `
     <div class="titlebar">
@@ -111,58 +166,109 @@ function createWindow(title, content) {
     <div class="content">${content}</div>
   `;
 
-  win.querySelector(".close").onclick = () => win.remove();
-
   document.body.appendChild(win);
+  apps[id] = win;
+
+  win.querySelector(".close").onclick = () => {
+    win.remove();
+    delete apps[id];
+    removeTask(id);
+  };
+
+  drag(win);
+  addTask(id, title, win);
+  bringToFront(win);
 }
 
-/* 🌐 BROWSER */
-function openBrowser() {
-  createWindow("Dolphin Browser", `
-    <input id="url" placeholder="Enter URL" style="width:100%">
-    <button onclick="go()">Go</button>
-    <iframe id="frame" style="width:100%;height:140px;"></iframe>
-  `);
+/* DRAG */
+function drag(win) {
+  const bar = win.querySelector(".titlebar");
+  let dx, dy, down = false;
 
-  setTimeout(() => {
-    window.go = function () {
-      let url = document.getElementById("url").value;
-      if (!url.startsWith("http")) url = "https://" + url;
-      document.getElementById("frame").src = url;
-    }
-  }, 100);
+  bar.onmousedown = e => {
+    down = true;
+    dx = e.clientX - win.offsetLeft;
+    dy = e.clientY - win.offsetTop;
+    bringToFront(win);
+  };
+
+  document.onmousemove = e => {
+    if (!down) return;
+    win.style.left = (e.clientX - dx) + "px";
+    win.style.top = (e.clientY - dy) + "px";
+  };
+
+  document.onmouseup = () => down = false;
 }
 
-/* 📁 FILE SYSTEM */
-function openFiles() {
-  let list = "";
-  for (let f in files) {
-    list += `<div onclick="openFile('${f}')">📄 ${f}</div>`;
+function bringToFront(w) {
+  w.style.zIndex = z++;
+}
+
+/* TASKBAR */
+function addTask(id, title, win) {
+  const t = document.createElement("div");
+  t.className = "taskbtn";
+  t.innerText = title;
+
+  t.onclick = () => {
+    win.style.display = "flex";
+    bringToFront(win);
+  };
+
+  t.id = "task-" + id;
+  document.getElementById("tasks").appendChild(t);
+}
+
+function removeTask(id) {
+  const el = document.getElementById("task-" + id);
+  if (el) el.remove();
+}
+
+/* APPS */
+
+/* 📁 FILE EXPLORER */
+function openApp(type) {
+
+  if (type === "files") {
+    createWindow("files", "File Explorer", `
+      <h3>Storage: ${storageUsed}/10 GB</h3>
+      <div onclick="openFile('readme.dol')">📄 readme.dol</div>
+      <div onclick="openFile('notes.dol')">📄 notes.dol</div>
+    `);
   }
-  createWindow("Files", list);
+
+  if (type === "settings") {
+    createWindow("settings", "Settings", `
+      <h3>DolphinOS Settings</h3>
+      <p>Storage used: ${storageUsed} GB</p>
+      <p>Theme: Blue Ocean</p>
+    `);
+  }
+
+  if (type === "browser") {
+    createWindow("browser", "Dolphin Browser", `
+      <input id="url" style="width:100%" placeholder="Enter URL">
+      <button onclick="go()">Go</button>
+      <iframe id="frame" style="width:100%;height:150px;"></iframe>
+    `);
+
+    setTimeout(() => {
+      window.go = function () {
+        let url = document.getElementById("url").value;
+        if (!url.startsWith("http")) url = "https://" + url;
+        document.getElementById("frame").src = url;
+      }
+    }, 100);
+  }
 }
 
+/* FILE OPEN */
 function openFile(name) {
-  createWindow(name, `
-    <textarea style="width:100%;height:150px;">${files[name]}</textarea>
-  `);
-}
-
-/* 📷 CAMERA */
-function openCamera() {
-  createWindow("Camera", `
-    <video id="video" autoplay style="width:100%"></video>
-  `);
-
-  setTimeout(async () => {
-    const video = document.getElementById("video");
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
-  }, 100);
+  createWindow(name, name, `<textarea style="width:100%;height:180px;">Dolphin file content</textarea>`);
 }
 
 </script>
 
 </body>
 </html>
-
