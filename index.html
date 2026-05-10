@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DolphinOS</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      overflow: hidden;
+    }
+
+    /* TASKBAR */
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 50px;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      color: white;
+    }
+
+    /* DESKTOP ICONS */
+    .icon {
+      width: 80px;
+      text-align: center;
+      color: white;
+      margin: 20px;
+      cursor: pointer;
+    }
+
+    .icon div {
+      font-size: 30px;
+    }
+
+    /* WINDOW */
+    .window {
+      position: absolute;
+      top: 100px;
+      left: 100px;
+      width: 300px;
+      height: 200px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: none;
+      flex-direction: column;
+    }
+
+    .titlebar {
+      background: #333;
+      color: white;
+      padding: 5px;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .content {
+      padding: 10px;
+      flex: 1;
+    }
+
+    .close {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- DESKTOP ICON -->
+<div class="icon" onclick="openApp()">
+  <div>📁</div>
+  <div>Files</div>
+</div>
+
+<!-- WINDOW -->
+<div class="window" id="window">
+  <div class="titlebar">
+    <span>File Explorer</span>
+    <span class="close" onclick="closeApp()">✖</span>
+  </div>
+  <div class="content">
+    Welcome to DolphinOS 🐬<br>
+    This is your first window.
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  🐬 DolphinOS
+</div>
+
+<script>
+function openApp() {
+  document.getElementById("window").style.display = "flex";
+}
+
+function closeApp() {
+  document.getElementById("window").style.display = "none";
+}
+</script>
+
+</body>
+</html>
