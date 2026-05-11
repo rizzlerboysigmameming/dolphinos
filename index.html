@@ -2,159 +2,382 @@
 <html>
 <head>
   <title>DolphinOS</title>
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      overflow: hidden;
+    body{
+      margin:0;
+      font-family:Arial;
+      overflow:hidden;
+      background:#0b1f3a;
+    }
+
+    /* LOGIN SCREEN */
+
+    #loginScreen{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      z-index:9999;
+    }
+
+    .loginBox{
+      width:320px;
+      background:rgba(255,255,255,0.1);
+      padding:25px;
+      border-radius:15px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .loginBox h1{
+      margin-top:0;
+      text-align:center;
+    }
+
+    .loginBox input{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border:none;
+      border-radius:8px;
+      box-sizing:border-box;
+    }
+
+    .loginBox button{
+      width:100%;
+      padding:10px;
+      margin-top:12px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      background:#00aaff;
+      color:white;
+      font-weight:bold;
+    }
+
+    .switch{
+      text-align:center;
+      margin-top:10px;
+      cursor:pointer;
+      color:#ddd;
+    }
+
+    #message{
+      margin-top:10px;
+      text-align:center;
+      color:#ffb3b3;
+    }
+
+    /* DESKTOP */
+
+    #desktop{
+      display:none;
+      width:100vw;
+      height:100vh;
+      background:linear-gradient(135deg,#1e3c72,#2a5298);
+    }
+
+    .icon{
+      width:80px;
+      text-align:center;
+      color:white;
+      margin:20px;
+      cursor:pointer;
+      display:inline-block;
+    }
+
+    .icon div:first-child{
+      font-size:32px;
     }
 
     /* TASKBAR */
-    .taskbar {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 45px;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      color: white;
-      gap: 10px;
+
+    .taskbar{
+      position:fixed;
+      bottom:0;
+      width:100%;
+      height:45px;
+      background:rgba(0,0,0,0.8);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:0 10px;
+      color:white;
     }
 
-    .startbtn {
-      background: #00aaff;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
+    .startbtn{
+      background:#00aaff;
+      padding:5px 10px;
+      border-radius:6px;
+      cursor:pointer;
     }
 
-    .taskbtn {
-      background: rgba(255,255,255,0.2);
-      padding: 5px 8px;
-      border-radius: 5px;
-      cursor: pointer;
+    .taskbtn{
+      background:rgba(255,255,255,0.2);
+      padding:5px 8px;
+      border-radius:5px;
+      cursor:pointer;
     }
 
     /* START MENU */
-    .startmenu {
-      position: fixed;
-      bottom: 45px;
-      left: 10px;
-      width: 200px;
-      background: white;
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+
+    .startmenu{
+      position:fixed;
+      bottom:50px;
+      left:10px;
+      width:220px;
+      background:white;
+      border-radius:10px;
+      display:none;
+      flex-direction:column;
+      overflow:hidden;
+      box-shadow:0 10px 20px rgba(0,0,0,0.3);
     }
 
-    .startmenu div {
-      padding: 10px;
-      cursor: pointer;
+    .startmenu div{
+      padding:12px;
+      cursor:pointer;
     }
 
-    .startmenu div:hover {
-      background: #eee;
+    .startmenu div:hover{
+      background:#eee;
     }
 
     /* WINDOW */
-    .window {
-      position: absolute;
-      width: 350px;
-      height: 250px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      display: flex;
-      flex-direction: column;
-      resize: both;
-      overflow: hidden;
+
+    .window{
+      position:absolute;
+      top:100px;
+      left:100px;
+      width:350px;
+      height:250px;
+      background:white;
+      border-radius:10px;
+      display:flex;
+      flex-direction:column;
+      resize:both;
+      overflow:hidden;
+      box-shadow:0 10px 25px rgba(0,0,0,0.4);
     }
 
-    .titlebar {
-      background: #222;
-      color: white;
-      padding: 5px;
-      display: flex;
-      justify-content: space-between;
-      cursor: move;
+    .titlebar{
+      background:#222;
+      color:white;
+      padding:5px;
+      display:flex;
+      justify-content:space-between;
+      cursor:move;
+      user-select:none;
     }
 
-    .content {
-      padding: 10px;
-      flex: 1;
-      overflow: auto;
+    .content{
+      flex:1;
+      padding:10px;
+      overflow:auto;
     }
 
-    .close { cursor: pointer; }
-
-    /* ICONS */
-    .icon {
-      width: 80px;
-      text-align: center;
-      color: white;
-      margin: 20px;
-      cursor: pointer;
-      display: inline-block;
+    .close{
+      cursor:pointer;
     }
-
-    .icon div:first-child { font-size: 30px; }
 
   </style>
 </head>
 
 <body>
 
-<!-- ICONS -->
-<div class="icon" onclick="openApp('files')">
-  <div>📁</div><div>Files</div>
+<!-- LOGIN SCREEN -->
+
+<div id="loginScreen">
+
+  <div class="loginBox">
+
+    <h1>🐬 DolphinOS</h1>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="submitAuth()" id="authBtn">
+      Login
+    </button>
+
+    <div class="switch" onclick="toggleMode()" id="switchText">
+      No account? Create one
+    </div>
+
+    <div id="message"></div>
+
+  </div>
+
 </div>
 
-<div class="icon" onclick="openApp('settings')">
-  <div>⚙️</div><div>Settings</div>
-</div>
+<!-- DESKTOP -->
 
-<div class="icon" onclick="openApp('browser')">
-  <div>🌐</div><div>Browser</div>
-</div>
+<div id="desktop">
 
-<!-- START MENU -->
-<div class="startmenu" id="startmenu">
-  <div onclick="openApp('files')">📁 File Explorer</div>
-  <div onclick="openApp('browser')">🌐 Browser</div>
-  <div onclick="openApp('settings')">⚙️ Settings</div>
-</div>
+  <!-- ICONS -->
 
-<!-- TASKBAR -->
-<div class="taskbar">
-  <div class="startbtn" onclick="toggleStart()">🐬 Dolphin</div>
-  <div id="tasks"></div>
+  <div class="icon" onclick="openApp('files')">
+    <div>📁</div>
+    <div>Files</div>
+  </div>
+
+  <div class="icon" onclick="openApp('browser')">
+    <div>🌐</div>
+    <div>Browser</div>
+  </div>
+
+  <div class="icon" onclick="openApp('settings')">
+    <div>⚙️</div>
+    <div>Settings</div>
+  </div>
+
+  <!-- START MENU -->
+
+  <div class="startmenu" id="startmenu">
+
+    <div onclick="openApp('files')">📁 File Explorer</div>
+
+    <div onclick="openApp('browser')">🌐 Browser</div>
+
+    <div onclick="openApp('settings')">⚙️ Settings</div>
+
+    <div onclick="logout()">🚪 Log Out</div>
+
+  </div>
+
+  <!-- TASKBAR -->
+
+  <div class="taskbar">
+
+    <div class="startbtn" onclick="toggleStart()">
+      🐬 Dolphin
+    </div>
+
+    <div id="tasks"></div>
+
+  </div>
+
 </div>
 
 <script>
 
+let signupMode = false;
 let apps = {};
 let z = 1;
-let storageUsed = 2; // fake GB
+
+/* AUTH SYSTEM */
+
+function toggleMode(){
+
+  signupMode = !signupMode;
+
+  document.getElementById("authBtn").innerText =
+    signupMode ? "Create Account" : "Login";
+
+  document.getElementById("switchText").innerText =
+    signupMode
+      ? "Already have an account? Login"
+      : "No account? Create one";
+
+  document.getElementById("message").innerText = "";
+}
+
+function submitAuth(){
+
+  let user = document.getElementById("username").value.trim();
+  let pass = document.getElementById("password").value.trim();
+
+  if(!user || !pass){
+    showMsg("Fill all fields");
+    return;
+  }
+
+  let users = JSON.parse(localStorage.getItem("dolphinUsers") || "{}");
+
+  if(signupMode){
+
+    if(users[user]){
+      showMsg("Account already exists");
+      return;
+    }
+
+    users[user] = {
+      password: pass
+    };
+
+    localStorage.setItem(
+      "dolphinUsers",
+      JSON.stringify(users)
+    );
+
+    showMsg("Account created! Login now");
+
+    toggleMode();
+
+  } else {
+
+    if(!users[user]){
+      showMsg("User not found");
+      return;
+    }
+
+    if(users[user].password !== pass){
+      showMsg("Wrong password");
+      return;
+    }
+
+    localStorage.setItem("currentUser", user);
+
+    loadDesktop(user);
+  }
+}
+
+function showMsg(msg){
+  document.getElementById("message").innerText = msg;
+}
+
+function loadDesktop(user){
+
+  document.getElementById("loginScreen").style.display = "none";
+
+  document.getElementById("desktop").style.display = "block";
+
+  console.log("Logged in as", user);
+}
+
+function logout(){
+
+  location.reload();
+}
 
 /* START MENU */
-function toggleStart() {
-  const sm = document.getElementById("startmenu");
-  sm.style.display = sm.style.display === "flex" ? "none" : "flex";
+
+function toggleStart(){
+
+  let menu = document.getElementById("startmenu");
+
+  menu.style.display =
+    menu.style.display === "flex"
+      ? "none"
+      : "flex";
 }
 
 /* WINDOW SYSTEM */
-function createWindow(id, title, content) {
-  if (apps[id]) {
+
+function createWindow(id,title,content){
+
+  if(apps[id]){
     apps[id].style.display = "flex";
-    bringToFront(apps[id]);
+    bringFront(apps[id]);
     return;
   }
 
   const win = document.createElement("div");
+
   win.className = "window";
   win.style.zIndex = z++;
 
@@ -163,10 +386,14 @@ function createWindow(id, title, content) {
       <span>${title}</span>
       <span class="close">✖</span>
     </div>
-    <div class="content">${content}</div>
+
+    <div class="content">
+      ${content}
+    </div>
   `;
 
   document.body.appendChild(win);
+
   apps[id] = win;
 
   win.querySelector(".close").onclick = () => {
@@ -175,98 +402,167 @@ function createWindow(id, title, content) {
     removeTask(id);
   };
 
-  drag(win);
-  addTask(id, title, win);
-  bringToFront(win);
+  dragWindow(win);
+
+  addTask(id,title,win);
+
+  bringFront(win);
 }
 
 /* DRAG */
-function drag(win) {
+
+function dragWindow(win){
+
   const bar = win.querySelector(".titlebar");
-  let dx, dy, down = false;
+
+  let down = false;
+  let dx = 0;
+  let dy = 0;
 
   bar.onmousedown = e => {
+
     down = true;
+
     dx = e.clientX - win.offsetLeft;
     dy = e.clientY - win.offsetTop;
-    bringToFront(win);
+
+    bringFront(win);
   };
 
   document.onmousemove = e => {
-    if (!down) return;
+
+    if(!down) return;
+
     win.style.left = (e.clientX - dx) + "px";
     win.style.top = (e.clientY - dy) + "px";
   };
 
-  document.onmouseup = () => down = false;
+  document.onmouseup = () => {
+    down = false;
+  };
 }
 
-function bringToFront(w) {
-  w.style.zIndex = z++;
+function bringFront(win){
+  win.style.zIndex = z++;
 }
 
 /* TASKBAR */
-function addTask(id, title, win) {
-  const t = document.createElement("div");
-  t.className = "taskbtn";
-  t.innerText = title;
 
-  t.onclick = () => {
+function addTask(id,title,win){
+
+  const btn = document.createElement("div");
+
+  btn.className = "taskbtn";
+
+  btn.innerText = title;
+
+  btn.id = "task-" + id;
+
+  btn.onclick = () => {
     win.style.display = "flex";
-    bringToFront(win);
+    bringFront(win);
   };
 
-  t.id = "task-" + id;
-  document.getElementById("tasks").appendChild(t);
+  document.getElementById("tasks").appendChild(btn);
 }
 
-function removeTask(id) {
+function removeTask(id){
+
   const el = document.getElementById("task-" + id);
-  if (el) el.remove();
+
+  if(el) el.remove();
 }
 
 /* APPS */
 
-/* 📁 FILE EXPLORER */
-function openApp(type) {
+function openApp(type){
 
-  if (type === "files") {
-    createWindow("files", "File Explorer", `
-      <h3>Storage: ${storageUsed}/10 GB</h3>
-      <div onclick="openFile('readme.dol')">📄 readme.dol</div>
-      <div onclick="openFile('notes.dol')">📄 notes.dol</div>
-    `);
+  if(type === "files"){
+
+    createWindow(
+      "files",
+      "File Explorer",
+      `
+      <h3>📁 Dolphin Files</h3>
+      <div>📄 notes.dol</div>
+      <div>📄 readme.dol</div>
+      `
+    );
   }
 
-  if (type === "settings") {
-    createWindow("settings", "Settings", `
-      <h3>DolphinOS Settings</h3>
-      <p>Storage used: ${storageUsed} GB</p>
-      <p>Theme: Blue Ocean</p>
-    `);
-  }
+  if(type === "browser"){
 
-  if (type === "browser") {
-    createWindow("browser", "Dolphin Browser", `
-      <input id="url" style="width:100%" placeholder="Enter URL">
-      <button onclick="go()">Go</button>
-      <iframe id="frame" style="width:100%;height:150px;"></iframe>
-    `);
+    createWindow(
+      "browser",
+      "Dolphin Browser",
+      `
+      <input id="url"
+      style="width:100%"
+      placeholder="Enter URL">
+
+      <button onclick="goSite()">
+      Go
+      </button>
+
+      <iframe id="frame"
+      style="width:100%;height:150px;">
+      </iframe>
+      `
+    );
 
     setTimeout(() => {
-      window.go = function () {
-        let url = document.getElementById("url").value;
-        if (!url.startsWith("http")) url = "https://" + url;
+
+      window.goSite = function(){
+
+        let url =
+          document.getElementById("url").value;
+
+        if(!url.startsWith("http")){
+          url = "https://" + url;
+        }
+
         document.getElementById("frame").src = url;
       }
-    }, 100);
+
+    },100);
+  }
+
+  if(type === "settings"){
+
+    createWindow(
+      "settings",
+      "Settings",
+      `
+      <h3>⚙️ DolphinOS Settings</h3>
+
+      <p>User:
+      ${localStorage.getItem("currentUser")}
+      </p>
+
+      <p>Version:
+      DolphinOS v0.5
+      </p>
+
+      <p>Theme:
+      Ocean Blue
+      </p>
+      `
+    );
   }
 }
 
-/* FILE OPEN */
-function openFile(name) {
-  createWindow(name, name, `<textarea style="width:100%;height:180px;">Dolphin file content</textarea>`);
-}
+/* AUTO LOGIN */
+
+window.onload = () => {
+
+  let current =
+    localStorage.getItem("currentUser");
+
+  if(current){
+
+    loadDesktop(current);
+  }
+};
 
 </script>
 
